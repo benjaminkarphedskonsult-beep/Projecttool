@@ -7,9 +7,9 @@ import ProjectView from './pages/Project/ProjectView.jsx'
 import { T } from './utils/design.js'
 
 export default function App() {
-  const { user, authLoading, view, initAuth } = useProjectStore()
+  const { user, authLoading, view, initAuth, cleanupAuth } = useProjectStore()
 
-  useEffect(() => { initAuth() }, [])
+  useEffect(() => { initAuth(); return () => cleanupAuth() }, [])
 
   if (authLoading) return (
     <div style={{ minHeight: '100vh', background: T.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

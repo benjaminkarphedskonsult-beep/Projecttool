@@ -67,7 +67,9 @@ const useProjectStore = create((set, get) => ({
   },
 
   loadProjects: async () => {
-    const { data } = await supabase.from('projects').select('id, data, created_at, updated_at').order('created_at', { ascending: false })
+    const { user } = get()
+    if (!user) return
+    const { data } = await supabase.from('projects').select('id, data, created_at, updated_at').eq('user_id', user.id).order('created_at', { ascending: false })
     set({ projects: data || [] })
   },
 
@@ -88,7 +90,9 @@ const useProjectStore = create((set, get) => ({
   },
 
   deleteProject: async (id) => {
-    await supabase.from('projects').delete().eq('id', id)
+    const { user } = get()
+    if (!user) return
+    await supabase.from('projects').delete().eq('user_id', user.id).eq('id', id)
     await get().loadProjects()
   },
 
