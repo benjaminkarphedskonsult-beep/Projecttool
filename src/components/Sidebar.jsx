@@ -83,13 +83,18 @@ export default function Sidebar() {
 
 function SidebarItem({ icon, label, active, disabled, onClick }) {
   return (
-    <div onClick={disabled ? undefined : onClick} style={{
-      padding: '7px 10px', borderRadius: 6, marginBottom: 2,
-      display: 'flex', alignItems: 'center', gap: 8, fontSize: 12,
-      background: active ? 'rgba(255,255,255,0.12)' : 'transparent',
-      color: disabled ? 'rgba(255,255,255,0.25)' : active ? '#fff' : 'rgba(255,255,255,0.65)',
-      cursor: disabled ? 'default' : 'pointer',
-    }}>
+    <div
+      onClick={disabled ? undefined : onClick}
+      role={disabled ? undefined : 'button'}
+      tabIndex={disabled ? undefined : 0}
+      onKeyDown={disabled ? undefined : (e) => { if (e.key === 'Enter' || e.key === ' ') onClick?.() }}
+      style={{
+        padding: '7px 10px', borderRadius: 6, marginBottom: 2,
+        display: 'flex', alignItems: 'center', gap: 8, fontSize: 12,
+        background: active ? 'rgba(255,255,255,0.12)' : 'transparent',
+        color: disabled ? 'rgba(255,255,255,0.25)' : active ? '#fff' : 'rgba(255,255,255,0.65)',
+        cursor: disabled ? 'default' : 'pointer',
+      }}>
       <span style={{ fontSize: 14 }}>{icon}</span>
       <span>{label}</span>
       {disabled && <span style={{ marginLeft: 'auto', fontSize: 9, opacity: 0.5 }}>fas 2+</span>}

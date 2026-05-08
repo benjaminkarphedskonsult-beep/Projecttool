@@ -21,7 +21,7 @@ export default function CRMView() {
 
   return (
     <div style={{ padding: 20 }}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12, marginBottom: 20 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12, marginBottom: 20 }}>
         {[
           { label: 'Totalt projekt', value: total },
           { label: 'Total kWp',      value: totalKWp.toFixed(1) },

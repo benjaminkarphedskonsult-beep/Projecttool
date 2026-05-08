@@ -1,4 +1,4 @@
-import { T, inp } from '../../utils/design.js'
+import { T } from '../../utils/design.js'
 
 export default function F({ label, children, style }) {
   return (
@@ -10,5 +10,3 @@ export default function F({ label, children, style }) {
     </div>
   )
 }
-
-export { inp }

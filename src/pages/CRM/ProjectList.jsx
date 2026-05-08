@@ -68,5 +68,6 @@ export default function ProjectList() {
 }
 
 function safeCalc(data) {
+  if (!data) return null
   try { return calcProject(data) } catch { return null }
 }

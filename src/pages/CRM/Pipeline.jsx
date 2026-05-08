@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { T, card } from '../../utils/design.js'
 import useProjectStore from '../../store/useProjectStore.js'
 import StatusBadge, { STATUSES } from '../../components/StatusBadge.jsx'
@@ -6,7 +7,10 @@ import { calcProject } from '../../utils/calc.js'
 export default function Pipeline() {
   const { projects, openProject, openProjectId } = useProjectStore()
 
-  const byStatus = (status) => projects.filter(p => (p.data?.status || 'Lead') === status)
+  const grouped = useMemo(
+    () => Object.fromEntries(STATUSES.map(s => [s, projects.filter(p => (p.data?.status || 'Lead') === s)])),
+    [projects]
+  )
 
   return (
     <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 8 }}>
@@ -14,10 +18,10 @@ export default function Pipeline() {
         <div key={status} style={{ minWidth: 220, flex: '0 0 220px' }}>
           <div style={{ marginBottom: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
             <StatusBadge status={status} size="sm" />
-            <span style={{ fontSize: 11, color: T.textMuted }}>{byStatus(status).length}</span>
+            <span style={{ fontSize: 11, color: T.textMuted }}>{grouped[status].length}</span>
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-            {byStatus(status).map(p => {
+            {grouped[status].map(p => {
               const calc = safeCalc(p.data)
               return (
                 <div key={p.id} onClick={() => openProject(p.id)}
