@@ -13,6 +13,7 @@ const DEFAULT_PROJECT_DATA = {
 }
 
 let saveTimer = null
+let authSubscription = null
 
 const useProjectStore = create((set, get) => ({
   // Auth
@@ -45,17 +46,25 @@ const useProjectStore = create((set, get) => ({
     } else {
       set({ authLoading: false })
     }
-    supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (session?.user) {
-        const { data: profile } = await supabase.from('profiles').select('role').eq('id', session.user.id).single()
-        set({ user: session.user, userRole: profile?.role ?? 'user' })
+        supabase.from('profiles').select('role').eq('id', session.user.id).single()
+          .then(({ data: profile }) => {
+            set({ user: session.user, userRole: profile?.role ?? 'user' })
+          })
       } else {
         set({ user: null, userRole: 'user', openProjectId: null, openProjectData: null, calc: null })
       }
     })
+    authSubscription = subscription
   },
 
   signOut: async () => { await supabase.auth.signOut() },
+
+  cleanupAuth: () => {
+    authSubscription?.unsubscribe()
+    authSubscription = null
+  },
 
   loadProjects: async () => {
     const { data } = await supabase.from('projects').select('id, data, created_at, updated_at').order('created_at', { ascending: false })
@@ -71,6 +80,7 @@ const useProjectStore = create((set, get) => ({
 
   createProject: async () => {
     const { user } = get()
+    if (!user) return null
     const { data } = await supabase.from('projects').insert({ user_id: user.id, data: DEFAULT_PROJECT_DATA }).select().single()
     if (!data) return null
     await get().loadProjects()
@@ -93,13 +103,15 @@ const useProjectStore = create((set, get) => ({
 
   loadPanelLibrary: async () => {
     const { user } = get()
+    if (!user) return
     const { data } = await supabase.from('panel_library').select('panels').eq('user_id', user.id).single()
     set({ panelLibrary: data?.panels || [] })
   },
   savePanelLibrary: async (panels) => {
     const { user } = get()
+    if (!user) return
     set({ panelLibrary: panels })
-    await supabase.from('panel_library').upsert({ user_id: user.id, panels }).eq('user_id', user.id)
+    await supabase.from('panel_library').upsert({ user_id: user.id, panels }, { onConflict: 'user_id' })
   },
 }))
 
@@ -118,7 +130,8 @@ function deepMerge(base, patch) {
 function scheduleSave(id, data) {
   if (saveTimer) clearTimeout(saveTimer)
   saveTimer = setTimeout(async () => {
-    await supabase.from('projects').update({ data, updated_at: new Date().toISOString() }).eq('id', id)
+    const { error } = await supabase.from('projects').update({ data, updated_at: new Date().toISOString() }).eq('id', id)
+    if (error) console.error('[scheduleSave] failed:', error)
   }, 500)
 }
 
