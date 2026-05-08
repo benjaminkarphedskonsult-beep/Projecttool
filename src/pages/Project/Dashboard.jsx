@@ -33,7 +33,7 @@ export default function Dashboard() {
         onChange={e => updateProjectData({ notes: e.target.value })}
         placeholder="Skriv anteckningar om projektet..."
         style={{ width: '100%', minHeight: 120, padding: '10px 12px', fontSize: 13, color: T.text,
-          background: '#f5f8fc', border: `1.5px solid ${T.border}`, borderRadius: 8, resize: 'vertical', outline: 'none' }}
+          background: '#f5f8fc', border: `1.5px solid ${T.border}`, borderRadius: 8, resize: 'vertical', outline: 'none', boxSizing: 'border-box' }}
       />
     </div>
   )

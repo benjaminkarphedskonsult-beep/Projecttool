@@ -11,7 +11,7 @@ export default function PanelLibrary() {
   const [form, setForm] = useState(EMPTY_PANEL)
   const activePanel = openProjectData?.activePanel
 
-  useEffect(() => { loadPanelLibrary() }, [])
+  useEffect(() => { loadPanelLibrary() }, [loadPanelLibrary])
 
   const addPanel = () => {
     if (!form.model) return

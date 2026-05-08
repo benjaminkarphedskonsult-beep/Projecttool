@@ -2,14 +2,13 @@ import { T, card } from '../../utils/design.js'
 import useProjectStore from '../../store/useProjectStore.js'
 import M from '../../components/ui/M.jsx'
 import SH from '../../components/ui/SH.jsx'
-import { MONTHLY_F } from '../../utils/calc.js'
+import { MONTHLY_F, MON_DAYS } from '../../utils/calc.js'
 
 const MONTHS = ['Jan','Feb','Mar','Apr','Maj','Jun','Jul','Aug','Sep','Okt','Nov','Dec']
 const fmt = (n, dec = 0) => n != null && isFinite(n) ? n.toLocaleString('sv-SE', { maximumFractionDigits: dec }) : '—'
 
 function BarChart({ monthlyProd, annualLoad }) {
   if (!monthlyProd) return null
-  const MON_DAYS = [31,28,31,30,31,30,31,31,30,31,30,31]
   const monthlyLoad = MONTHLY_F.map((f, mi) => annualLoad / 12 * MON_DAYS[mi] / 30)
   const max = Math.max(...monthlyProd, ...monthlyLoad, 1)
   const barW = 28, gap = 6, h = 120, pad = 20
@@ -39,7 +38,6 @@ export default function Analysis() {
   const { calc, openProjectData } = useProjectStore()
   const taxCat = openProjectData?.customer?.taxCategory || 'Företag'
   const annualLoad = openProjectData?.loadData?.annualLoad || 0
-  const MON_DAYS = [31,28,31,30,31,30,31,31,30,31,30,31]
 
   return (
     <div>
@@ -84,8 +82,8 @@ export default function Analysis() {
         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
           <thead>
             <tr style={{ background: T.bg }}>
-              {['Månad','Prod (kWh)','Förb (kWh)','Egenanv','Export','Besparing'].map(h => (
-                <th key={h} style={{ padding: '8px 12px', textAlign: 'left', fontSize: 10, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: `1px solid ${T.border}` }}>{h}</th>
+              {['Månad','Prod (kWh)','Förb (kWh)','Egenanv','Export','Besparing'].map(col => (
+                <th key={col} scope="col" style={{ padding: '8px 12px', textAlign: 'left', fontSize: 10, fontWeight: 700, color: T.textMuted, textTransform: 'uppercase', letterSpacing: '0.05em', borderBottom: `1px solid ${T.border}` }}>{col}</th>
               ))}
             </tr>
           </thead>
@@ -95,7 +93,7 @@ export default function Analysis() {
               const load = annualLoad / 12 * MON_DAYS[mi] / 30
               const self = Math.min(prod, load)
               const exp  = Math.max(0, prod - load)
-              const save = self * ((openProjectData?.loadData?.spotPrice || 0.8) + (openProjectData?.loadData?.gridTariff || 0.6))
+              const save = self * ((openProjectData?.loadData?.spotPrice ?? 0) + (openProjectData?.loadData?.gridTariff ?? 0))
               return (
                 <tr key={m} style={{ borderBottom: `1px solid ${T.borderLight}` }}>
                   <td style={{ padding: '7px 12px', fontWeight: 600 }}>{m}</td>

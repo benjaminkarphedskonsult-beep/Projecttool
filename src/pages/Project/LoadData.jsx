@@ -2,16 +2,9 @@ import { T, inp, card } from '../../utils/design.js'
 import useProjectStore from '../../store/useProjectStore.js'
 import F from '../../components/ui/F.jsx'
 import SH from '../../components/ui/SH.jsx'
-import { MONTHLY_F } from '../../utils/calc.js'
+import { SOLAR_H, LOAD_PROFILES } from '../../utils/calc.js'
 
 const PROFILES = ['industri','brf','handel','lantbruk']
-const SOLAR_H = [0,0,0,0,0,0,0.01,0.04,0.09,0.14,0.17,0.18,0.17,0.16,0.13,0.08,0.03,0.01,0,0,0,0,0,0]
-const LOAD_PROFILES = {
-  industri: [0.3,0.2,0.2,0.2,0.2,0.2,0.4,0.7,1.0,1.0,1.0,1.0,1.0,1.0,0.9,0.9,0.8,0.6,0.5,0.4,0.4,0.4,0.3,0.3],
-  brf:      [0.6,0.5,0.5,0.5,0.6,0.7,0.8,0.9,1.0,0.9,0.8,0.7,0.6,0.5,0.5,0.5,0.6,0.8,1.0,1.0,0.9,0.8,0.7,0.6],
-  handel:   [0.2,0.2,0.2,0.2,0.2,0.3,0.5,0.8,1.0,1.0,1.0,1.0,1.0,1.0,0.9,0.8,0.6,0.4,0.3,0.2,0.2,0.2,0.2,0.2],
-  lantbruk: [0.4,0.3,0.3,0.3,0.4,0.5,0.7,0.9,1.0,1.0,0.9,0.8,0.8,0.9,1.0,0.9,0.8,0.7,0.6,0.5,0.5,0.4,0.4,0.4],
-}
 
 function DayProfileSVG({ profile, solar }) {
   const w = 480, h = 120, pad = 10
@@ -22,8 +15,8 @@ function DayProfileSVG({ profile, solar }) {
     <svg width="100%" viewBox={`0 0 ${w} ${h}`} style={{ display: 'block' }}>
       <polyline points={pts(solar)} fill="none" stroke={T.orange} strokeWidth="2" />
       <polyline points={pts(profile)} fill="none" stroke={T.blue} strokeWidth="2" />
-      {[0,6,12,18,23].map(h => (
-        <text key={h} x={pad + h * ((w - 2 * pad) / 23)} y={h - 2} fontSize="9" fill={T.textMuted} textAnchor="middle">{h}:00</text>
+      {[0,6,12,18,23].map(hr => (
+        <text key={hr} x={pad + hr * ((w - 2 * pad) / 23)} y={h - 2} fontSize="9" fill={T.textMuted} textAnchor="middle">{hr}:00</text>
       ))}
       <text x={w - 4} y={16} fontSize="9" fill={T.orange} textAnchor="end">Sol</text>
       <text x={w - 4} y={28} fontSize="9" fill={T.blue} textAnchor="end">Last</text>
