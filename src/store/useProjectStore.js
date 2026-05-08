@@ -30,6 +30,7 @@ const useProjectStore = create((set, get) => ({
   openProjectId: null,
   openProjectData: null,
   calc: null,
+  panelLibrary: [],
 
   // Actions
   setView: (view) => set({ view }),
@@ -64,7 +65,7 @@ const useProjectStore = create((set, get) => ({
   openProject: async (id) => {
     const { data } = await supabase.from('projects').select('id, data').eq('id', id).single()
     if (!data) return
-    const projectData = { ...DEFAULT_PROJECT_DATA, ...data.data }
+    const projectData = deepMerge(DEFAULT_PROJECT_DATA, data.data)
     set({ openProjectId: id, openProjectData: projectData, view: 'project', projectTab: 1, calc: calcProject(projectData) })
   },
 
@@ -90,7 +91,6 @@ const useProjectStore = create((set, get) => ({
     scheduleSave(get().openProjectId, updated)
   },
 
-  panelLibrary: [],
   loadPanelLibrary: async () => {
     const { user } = get()
     const { data } = await supabase.from('panel_library').select('panels').eq('user_id', user.id).single()
