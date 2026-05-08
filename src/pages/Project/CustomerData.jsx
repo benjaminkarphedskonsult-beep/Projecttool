@@ -1,4 +1,4 @@
-import { T, inp } from '../../utils/design.js'
+import { inp } from '../../utils/design.js'
 import useProjectStore from '../../store/useProjectStore.js'
 import F from '../../components/ui/F.jsx'
 import SH from '../../components/ui/SH.jsx'

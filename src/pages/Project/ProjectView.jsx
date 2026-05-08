@@ -20,7 +20,7 @@ const TABS = [
 ]
 
 export default function ProjectView() {
-  const { openProjectData, projectTab, setProjectTab, updateProjectData, projects, openProjectId } = useProjectStore()
+  const { openProjectData, projectTab, setProjectTab, updateProjectData } = useProjectStore()
   if (!openProjectData) return null
 
   const name = openProjectData.customer?.name || 'Nytt projekt'

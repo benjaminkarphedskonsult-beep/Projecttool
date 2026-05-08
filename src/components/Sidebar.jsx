@@ -1,6 +1,5 @@
 import { T } from '../utils/design.js'
 import useProjectStore from '../store/useProjectStore.js'
-import StatusBadge from './StatusBadge.jsx'
 
 const NAV_ITEMS = [
   { key: 'pipeline', label: 'Pipeline', icon: '📊' },
@@ -22,7 +21,7 @@ const PROJECT_TABS = [
 ]
 
 export default function Sidebar() {
-  const { user, userRole, view, crmTab, projectTab, openProjectId, openProjectData, projects,
+  const { user, userRole, view, crmTab, projectTab, openProjectId, projects,
           setView, setCrmTab, setProjectTab, openProject, createProject, signOut, loadProjects } = useProjectStore()
 
   const handleNewProject = async () => {

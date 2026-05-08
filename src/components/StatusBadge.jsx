@@ -7,6 +7,7 @@ const STATUS_STYLES = {
   'Installerat': { background: '#ede9fe', color: '#7c3aed' },
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const STATUSES = Object.keys(STATUS_STYLES)
 
 export default function StatusBadge({ status, size = 'md' }) {
