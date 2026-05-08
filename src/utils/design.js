@@ -5,7 +5,7 @@ export const T = {
   orange: '#d97706', orangeLight: '#fef3c7',
   text: '#1a2332', textMuted: '#5a6a7a', textLight: '#8a9ab0',
   bg: '#f0f4f9', bgCard: '#ffffff', bgSidebar: '#0d2444',
-  border: '#dce4ef', borderLight: '#eef2f7',
+  border: '#dce4ef', borderLight: '#eef2f7', bgInput: '#f5f8fc',
   radius: '10px', radiusSm: '6px',
   shadow: '0 2px 8px rgba(0,0,0,0.08)',
 }
@@ -22,7 +22,7 @@ export const card = (x = {}) => ({
 export const inp = {
   width: '100%',
   boxSizing: 'border-box',
-  background: '#f5f8fc',
+  background: T.bgInput,
   border: `1.5px solid ${T.border}`,
   borderRadius: T.radiusSm,
   padding: '8px 12px',
