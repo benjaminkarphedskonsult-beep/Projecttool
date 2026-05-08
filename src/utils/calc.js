@@ -2,6 +2,7 @@ export const MONTHLY_F = [0.30,0.50,0.80,1.10,1.30,1.35,1.30,1.20,0.95,0.65,0.35
 export const MON_DAYS  = [31,28,31,30,31,30,31,31,30,31,30,31]
 
 const SOLAR_H = [0,0,0,0,0,0,0.01,0.04,0.09,0.14,0.17,0.18,0.17,0.16,0.13,0.08,0.03,0.01,0,0,0,0,0,0]
+const SOLAR_H_SUM = SOLAR_H.reduce((s, v) => s + v, 0)
 
 const LOAD_PROFILES = {
   industri: [0.3,0.2,0.2,0.2,0.2,0.2,0.4,0.7,1.0,1.0,1.0,1.0,1.0,1.0,0.9,0.9,0.8,0.6,0.5,0.4,0.4,0.4,0.3,0.3],
@@ -14,7 +15,7 @@ export const azFactor = (az) =>
   Math.max(0.45, 0.775 + 0.225 * Math.cos(az * Math.PI / 180))
 
 export const tiltFactor = (tilt) =>
-  1 - 0.003 * Math.abs(tilt - 35)
+  Math.max(0, 1 - 0.003 * Math.abs(tilt - 35))
 
 export function calcProject(data) {
   const { roofPlanes = [], activePanel = {}, electrical = {}, loadData = {}, customer = {} } = data
@@ -45,7 +46,7 @@ export function calcProject(data) {
 
   for (let mi = 0; mi < 12; mi++) {
     for (let h = 0; h < 24; h++) {
-      const solarH = monthlyProd[mi] * SOLAR_H[h] * MONTHLY_F[mi] * 1.8 / MON_DAYS[mi]
+      const solarH = monthlyProd[mi] * SOLAR_H[h] / SOLAR_H_SUM / MON_DAYS[mi]
       const loadH  = annualLoad / 12 * MON_DAYS[mi] / 30 * profile[h] / profileSum / MON_DAYS[mi]
       totSelf += Math.min(solarH, loadH) * MON_DAYS[mi]
       totExp  += Math.max(0, solarH - loadH) * MON_DAYS[mi]

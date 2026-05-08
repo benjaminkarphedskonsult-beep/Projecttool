@@ -55,4 +55,24 @@ describe('calcProject()', () => {
     // stringVMax / voc = floor(1000 / 40.5) = 24
     expect(r.panPerStr).toBe(24)
   })
+
+  it('energikonservering: totSelf + totExp <= annualProd', () => {
+    const r = calcProject(base)
+    expect(r.totSelf + r.totExp).toBeLessThanOrEqual(r.annualProd * 1.01)
+  })
+
+  it('selfPct är aldrig över 100', () => {
+    const r = calcProject(base)
+    expect(r.selfPct).toBeLessThanOrEqual(100)
+  })
+
+  it('noll paneler ger invest 0 och payback Infinity', () => {
+    const r = calcProject({ ...base, roofPlanes: [{ azimuth: 0, tilt: 35, panels: 0 }] })
+    expect(r.invest).toBe(0)
+    expect(r.payback).toBe(Infinity)
+  })
+
+  it('tiltFactor är aldrig negativ', () => {
+    expect(tiltFactor(500)).toBeGreaterThanOrEqual(0)
+  })
 })
