@@ -17,6 +17,24 @@ export const azFactor = (az) =>
 export const tiltFactor = (tilt) =>
   Math.max(0, 1 - 0.003 * Math.abs(tilt - 35))
 
+// taxYear: '2025' | '2026' (string)
+// Privatperson 2025: skattereduktion 0.60 kr/kWh upp till 30 000 kWh, sedan kapitalskatt
+// Privatperson 2026+: ingen reduktion, kapitalskatt 30% på (exportRevenue - 40 000)
+// Företag: 20.6% bolagsskatt på exportRevenue
+export function calcTax(taxCategory, taxYear, exportRevenue, totExp) {
+  if (taxCategory !== 'Privatperson') return exportRevenue * 0.206
+
+  const capitalTax = Math.max(0, exportRevenue - 40000) * 0.30
+
+  if (taxYear === '2025') {
+    const reduction = Math.min(totExp, 30000) * 0.60
+    return Math.max(0, capitalTax - reduction)
+  }
+
+  // 2026+
+  return capitalTax
+}
+
 export function calcProject(data) {
   const { roofPlanes = [], activePanel = {}, electrical = {}, loadData = {}, customer = {} } = data
 
@@ -61,10 +79,9 @@ export function calcProject(data) {
                    + battSave
   const peakSave  = totPeak / 12 * (loadData.peakTariff || 0)
 
-  const taxCat = customer.taxCategory || 'Företag'
-  const taxAmt = taxCat === 'Privatperson'
-    ? Math.max(0, exportRevenue - 40000) * 0.30
-    : exportRevenue * 0.206
+  const taxCat  = customer.taxCategory || 'Företag'
+  const taxYear = loadData.taxYear || '2026'
+  const taxAmt  = calcTax(taxCat, taxYear, exportRevenue, totExp)
   const energyTax    = totalKWp >= 500 ? totExp * 0.439 : 0
   const netAfterTax  = energySave + peakSave - taxAmt - energyTax
   const invest       = totalKWp * 8500 + (loadData.hasBattery ? (loadData.battCapacity || 0) * 3500 : 0)

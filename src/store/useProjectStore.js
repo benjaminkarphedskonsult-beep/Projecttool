@@ -9,7 +9,7 @@ const DEFAULT_PROJECT_DATA = {
   activePanel: { model: '', wp: 400, width: 1.1, height: 1.7, voc: 40.5, isc: 10.2 },
   roofPlanes: [{ id: 1, length: 10, width: 6, tilt: 35, azimuth: 0, panels: 0, marginN: 0.5, marginS: 0.5, marginE: 0.5, marginW: 0.5 }],
   electrical: { fuse: 63, phases: 3, voltage: 400, inverterEff: 0.97, stringVMax: 1000 },
-  loadData: { annualLoad: 0, profile: 'industri', gridTariff: 0.6, spotPrice: 0.8, peakTariff: 80, hasBattery: false, battCapacity: 0 },
+  loadData: { annualLoad: 0, profile: 'industri', gridTariff: 0.6, spotPrice: 0.8, peakTariff: 80, hasBattery: false, battCapacity: 0, taxYear: '2026' },
 }
 
 let saveTimer = null

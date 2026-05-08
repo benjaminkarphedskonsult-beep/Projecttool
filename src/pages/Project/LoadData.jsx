@@ -27,6 +27,7 @@ function DayProfileSVG({ profile, solar }) {
 export default function LoadData() {
   const { openProjectData, updateProjectData } = useProjectStore()
   const ld = openProjectData?.loadData || {}
+  const taxCategory = openProjectData?.customer?.taxCategory
   const set = (field, val) => updateProjectData({ loadData: { [field]: val } })
 
   const profile = LOAD_PROFILES[ld.profile] || LOAD_PROFILES.industri
@@ -51,6 +52,18 @@ export default function LoadData() {
           <F label="Elnätstariff (kr/kWh)"><input style={inp} type="number" step="0.01" value={ld.gridTariff ?? 0.6} onChange={e => set('gridTariff', +e.target.value)} /></F>
           <F label="Spotpris (kr/kWh)"><input style={inp} type="number" step="0.01" value={ld.spotPrice ?? 0.8} onChange={e => set('spotPrice', +e.target.value)} /></F>
           <F label="Effekttariff (kr/kW/mån)"><input style={inp} type="number" step="1" value={ld.peakTariff ?? 80} onChange={e => set('peakTariff', +e.target.value)} /></F>
+          {taxCategory === 'Privatperson' && (
+            <F label="Skattemodell (privatperson)">
+              <select
+                value={ld.taxYear ?? '2026'}
+                onChange={e => set('taxYear', e.target.value)}
+                style={{ ...inp }}
+              >
+                <option value="2025">Inkomstår 2025 — 60 öre/kWh (max 18 000 kr)</option>
+                <option value="2026">Fr.o.m. 2026 — avskaffad skattereduktion</option>
+              </select>
+            </F>
+          )}
         </div>
 
         <div>
