@@ -122,6 +122,8 @@ const useProjectStore = create((set, get) => ({
   updateCanvasFields: (roofPlaneId, fields) => {
     const { openProjectData } = get()
     if (!openProjectData) return
+    const planeExists = openProjectData.roofPlanes.some(p => p.id === roofPlaneId)
+    if (!planeExists) return
     const panelCount = countCanvasPanels(fields)
     const updatedPlanes = openProjectData.roofPlanes.map(p =>
       p.id === roofPlaneId ? { ...p, panels: panelCount } : p
@@ -134,7 +136,7 @@ const useProjectStore = create((set, get) => ({
 }))
 
 export function countCanvasPanels(fields) {
-  return (fields || []).reduce((sum, f) => sum + f.cols * f.rows - f.removed.length, 0)
+  return (fields || []).reduce((sum, f) => sum + f.cols * f.rows - (f.removed?.length ?? 0), 0)
 }
 
 function deepMerge(base, patch) {
