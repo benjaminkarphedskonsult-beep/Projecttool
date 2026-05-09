@@ -5,6 +5,19 @@ import { MONTHLY_F, MON_DAYS } from '../../utils/calc.js'
 import { drawLayout } from '../../utils/canvasRender.js'
 
 const MONTHS = ['Jan','Feb','Mar','Apr','Maj','Jun','Jul','Aug','Sep','Okt','Nov','Dec']
+const DEFAULT_PANEL = { model: '', wp: 400, width: 1.1, height: 1.7 }
+
+const PRINT_CSS = `
+@media print {
+  body * { visibility: hidden; }
+  #report-page-1, #report-page-1 *,
+  #report-page-2, #report-page-2 *,
+  #report-page-3, #report-page-3 * { visibility: visible; }
+  .no-print { display: none !important; }
+  @page { size: A4; margin: 0; }
+  #report-page-2 { page-break-before: always; }
+  #report-page-3 { page-break-before: always; }
+}`
 const fmt = (n, dec = 0) => (n != null && isFinite(n)) ? n.toLocaleString('sv-SE', { maximumFractionDigits: dec }) : '—'
 const A4_W = 794
 const A4_H = 1123
@@ -61,16 +74,24 @@ export default function Report() {
   const canvasRef = useRef(null)
 
   const cust   = openProjectData?.customer || {}
-  const panel  = openProjectData?.activePanel || { model: '', wp: 400, width: 1.1, height: 1.7 }
+  const panel  = openProjectData?.activePanel || DEFAULT_PANEL
   const planes = openProjectData?.roofPlanes || []
   const load   = openProjectData?.loadData || {}
   const elec   = openProjectData?.electrical || {}
   const canvasData = openProjectData?.canvasData || {}
 
   useEffect(() => {
+    const style = document.createElement('style')
+    style.textContent = PRINT_CSS
+    document.head.appendChild(style)
+    return () => document.head.removeChild(style)
+  }, [])
+
+  useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     const ctx = canvas.getContext('2d')
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
     ctx.fillStyle = '#fafcff'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     const allFields = Object.values(canvasData).flat()
