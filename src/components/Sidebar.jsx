@@ -16,7 +16,7 @@ const PROJECT_TABS = [
   { n: 6,  icon: '⚡',  label: 'Elsystem', fas: 1 },
   { n: 7,  icon: '📊', label: 'Timdata',  fas: 1 },
   { n: 8,  icon: '📈', label: 'Analys',   fas: 1 },
-  { n: 9,  icon: '📐', label: 'CAD',      fas: 3 },
+  { n: 9,  icon: '📐', label: 'CAD',      fas: 1 },
   { n: 10, icon: '📄', label: 'Rapport',  fas: 1 },
 ]
 
