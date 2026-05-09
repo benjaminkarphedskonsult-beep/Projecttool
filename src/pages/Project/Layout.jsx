@@ -1,4 +1,3 @@
-// src/pages/Project/Layout.jsx
 import { T } from '../../utils/design.js'
 
 export default function Layout() {

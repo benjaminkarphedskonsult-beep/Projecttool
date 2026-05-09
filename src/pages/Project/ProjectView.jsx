@@ -55,14 +55,14 @@ export default function ProjectView() {
       </div>
 
       <div style={{ flex: 1, overflow: 'auto', padding: 20 }}>
-        {projectTab === 1 && <Dashboard />}
-        {projectTab === 2 && <CustomerData />}
-        {projectTab === 3 && <PanelLibrary />}
-        {projectTab === 4 && <RoofPlanes />}
-        {projectTab === 6 && <ElectricalSystem />}
-        {projectTab === 7 && <LoadData />}
-        {projectTab === 8 && <Analysis />}
+        {projectTab === 1  && <Dashboard />}
+        {projectTab === 2  && <CustomerData />}
+        {projectTab === 3  && <PanelLibrary />}
+        {projectTab === 4  && <RoofPlanes />}
         {projectTab === 5  && <Layout />}
+        {projectTab === 6  && <ElectricalSystem />}
+        {projectTab === 7  && <LoadData />}
+        {projectTab === 8  && <Analysis />}
         {projectTab === 10 && <Report />}
       </div>
     </div>

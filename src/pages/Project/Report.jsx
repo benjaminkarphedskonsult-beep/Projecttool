@@ -1,4 +1,3 @@
-// src/pages/Project/Report.jsx
 import { T } from '../../utils/design.js'
 
 export default function Report() {
