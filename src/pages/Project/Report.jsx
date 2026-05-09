@@ -88,6 +88,7 @@ export default function Report() {
   }, [])
 
   useEffect(() => {
+    canvasRefs.current.length = planes.length  // trimma stale refs
     planes.forEach((plane, i) => {
       const canvas = canvasRefs.current[i]
       if (!canvas) return
@@ -96,8 +97,13 @@ export default function Report() {
       ctx.fillStyle = '#fafcff'
       ctx.fillRect(0, 0, canvas.width, canvas.height)
       const planeData = canvasData[plane.id] || { fields: [], obstacles: [] }
+      const fullW = Math.round((plane.length || 10) * 100)
+      const scale = canvas.width / fullW
+      ctx.save()
+      ctx.scale(scale, scale)
       drawRoofBoundary(ctx, plane)
-      drawLayout(ctx, planeData, panel, { gridW: canvas.width, gridH: canvas.height, showGrid: false })
+      drawLayout(ctx, planeData, panel, { gridW: fullW, gridH: Math.round((plane.width || 6) * 100), showGrid: false })
+      ctx.restore()
     })
   }, [canvasData, panel, planes])
 
@@ -286,12 +292,14 @@ export default function Report() {
         {planes.map((plane, i) => {
           const pd = canvasData[plane.id] || { fields: [], obstacles: [] }
           const panelCount = (pd.fields || []).reduce((s, f) => s + f.cols * f.rows - (f.removed?.length ?? 0), 0)
-          const cW = Math.min(698, Math.round((plane.length || 10) * 100))
-          const cH = Math.round((plane.width || 6) * 100 * (cW / Math.round((plane.length || 10) * 100)))
+          const fullW = Math.round((plane.length || 10) * 100)
+          const fullH = Math.round((plane.width || 6) * 100)
+          const cW = Math.min(698, fullW)
+          const cH = Math.round(fullH * (cW / fullW))
           return (
             <div key={plane.id} style={{ marginBottom: 20 }}>
               <div style={{ fontWeight: 700, fontSize: 11, color: '#1557a0', marginBottom: 6, textTransform: 'uppercase' }}>
-                Takplan {plane.id} — {plane.length} × {plane.width} m · {panelCount} paneler
+                Takplan {i + 1} — {plane.length} × {plane.width} m · {panelCount} paneler
               </div>
               <canvas
                 ref={el => { canvasRefs.current[i] = el }}
