@@ -141,6 +141,7 @@ export default function Layout() {
   }
 
   const onMouseUp = (e) => {
+    if (!drawState && !moveState && !obsDrawState) return  // nothing to commit
     const { x, y } = canvasPos(e)
     if (mode === 'draw' && drawState) {
       const { w: pw, h: ph } = panelDims(panel, 'portrait')
@@ -158,7 +159,7 @@ export default function Layout() {
     } else if (mode === 'obstacle' && obsDrawState) {
       const x2 = snapToGrid(x), y2 = snapToGrid(y)
       if (x2 > obsDrawState.x1 && y2 > obsDrawState.y1) {
-        updateCanvasObstacles(selectedPlaneId, [...obstacles, { id: newFieldId(), x: obsDrawState.x1, y: obsDrawState.y1, w: x2 - obsDrawState.x1, h: y2 - obsDrawState.y1, label: 'Övrigt' }])
+        updateCanvasObstacles(selectedPlaneId, [...obstacles, { id: newFieldId(), x: obsDrawState.x1, y: obsDrawState.y1, w: x2 - obsDrawState.x1, h: y2 - obsDrawState.y1, label: obsForm.label }])
       }
       setObsDrawState(null)
     }
@@ -190,7 +191,7 @@ export default function Layout() {
   const { w: roofW, h: roofH } = roofBoundaryDims(selectedPlane)
   const outOfBounds = fields.some(f => {
     const b = fieldBounds(f, panel)
-    return b.x + b.w > roofW || b.y + b.h > roofH
+    return b.x < 0 || b.y < 0 || b.x + b.w > roofW || b.y + b.h > roofH
   })
 
   const totalPanels  = fields.reduce((s, f) => s + countCellRect(f), 0)
@@ -279,7 +280,14 @@ export default function Layout() {
           onMouseDown={onMouseDown}
           onMouseMove={onMouseMove}
           onMouseUp={onMouseUp}
-          onMouseLeave={() => { setDrawState(null); setMoveState(null); setObsDrawState(null) }}
+          onMouseLeave={(e) => {
+            if (moveState) {
+              const { x, y } = canvasPos(e)
+              const nx = snapToGrid(x - moveState.offX), ny = snapToGrid(y - moveState.offY)
+              updateCanvasFields(selectedPlaneId, fields.map(f => f.id === moveState.fieldId ? { ...f, x: nx, y: ny } : f))
+            }
+            setDrawState(null); setMoveState(null); setObsDrawState(null)
+          }}
         />
       </div>
     </div>
