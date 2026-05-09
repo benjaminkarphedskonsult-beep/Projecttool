@@ -78,7 +78,12 @@ const useProjectStore = create((set, get) => ({
     const { data } = await supabase.from('projects').select('id, data').eq('id', id).single()
     if (!data) return
     const projectData = deepMerge(DEFAULT_PROJECT_DATA, data.data)
-    set({ openProjectId: id, openProjectData: projectData, view: 'project', projectTab: 1, calc: calcProject(projectData) })
+    const migratedCanvas = {}
+    for (const [k, v] of Object.entries(projectData.canvasData || {})) {
+      migratedCanvas[k] = migrateCanvasPlane(v)
+    }
+    const migrated = { ...projectData, canvasData: migratedCanvas }
+    set({ openProjectId: id, openProjectData: migrated, view: 'project', projectTab: 1, calc: calcProject(migrated) })
   },
 
   createProject: async () => {
@@ -125,15 +130,32 @@ const useProjectStore = create((set, get) => ({
     const planeExists = openProjectData.roofPlanes.some(p => p.id === roofPlaneId)
     if (!planeExists) return
     const panelCount = countCanvasPanels(fields)
+    const current = openProjectData.canvasData[roofPlaneId] || { fields: [], obstacles: [] }
     const updatedPlanes = openProjectData.roofPlanes.map(p =>
       p.id === roofPlaneId ? { ...p, panels: panelCount } : p
     )
     get().updateProjectData({
-      canvasData: { ...openProjectData.canvasData, [roofPlaneId]: fields },
+      canvasData: { ...openProjectData.canvasData, [roofPlaneId]: { ...current, fields } },
       roofPlanes: updatedPlanes,
     })
   },
+
+  updateCanvasObstacles: (roofPlaneId, obstacles) => {
+    const { openProjectData } = get()
+    if (!openProjectData) return
+    const current = openProjectData.canvasData[roofPlaneId] || { fields: [], obstacles: [] }
+    get().updateProjectData({
+      canvasData: { ...openProjectData.canvasData, [roofPlaneId]: { ...current, obstacles } },
+    })
+  },
 }))
+
+// Lägg till denna hjälpfunktion UTANFÖR create(), ovanför countCanvasPanels:
+function migrateCanvasPlane(data) {
+  if (!data) return { fields: [], obstacles: [] }
+  if (Array.isArray(data)) return { fields: data, obstacles: [] }
+  return { fields: data.fields || [], obstacles: data.obstacles || [] }
+}
 
 export function countCanvasPanels(fields) {
   return (fields || []).reduce((sum, f) => sum + f.cols * f.rows - (f.removed?.length ?? 0), 0)
