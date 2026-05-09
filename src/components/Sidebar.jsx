@@ -12,12 +12,12 @@ const PROJECT_TABS = [
   { n: 2,  icon: '🏢', label: 'Kunddata', fas: 1 },
   { n: 3,  icon: '☀',  label: 'Paneler',  fas: 1 },
   { n: 4,  icon: '⬡',  label: 'Takplan',  fas: 1 },
-  { n: 5,  icon: '▦',  label: 'Layout',   fas: 2 },
+  { n: 5,  icon: '▦',  label: 'Layout',   fas: 1 },
   { n: 6,  icon: '⚡',  label: 'Elsystem', fas: 1 },
   { n: 7,  icon: '📊', label: 'Timdata',  fas: 1 },
   { n: 8,  icon: '📈', label: 'Analys',   fas: 1 },
   { n: 9,  icon: '📐', label: 'CAD',      fas: 3 },
-  { n: 10, icon: '📄', label: 'Rapport',  fas: 2 },
+  { n: 10, icon: '📄', label: 'Rapport',  fas: 1 },
 ]
 
 export default function Sidebar() {
@@ -30,7 +30,7 @@ export default function Sidebar() {
   }
 
   const currentProject = projects.find(p => p.id === openProjectId)
-  const projectName = currentProject?.data?.customer?.name || 'Nytt projekt'
+  const projectName = currentProject?.data?.customer?.name || 'Namnlöst projekt'
 
   return (
     <div style={{ width: 220, background: T.bgSidebar, color: '#fff', display: 'flex', flexDirection: 'column', flexShrink: 0, height: '100vh', overflowY: 'auto' }}>

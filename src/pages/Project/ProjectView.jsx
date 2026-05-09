@@ -8,22 +8,26 @@ import RoofPlanes from './RoofPlanes.jsx'
 import ElectricalSystem from './ElectricalSystem.jsx'
 import LoadData from './LoadData.jsx'
 import Analysis from './Analysis.jsx'
+import Layout from './Layout.jsx'
+import Report from './Report.jsx'
 
 const TABS = [
-  { n: 1, icon: '⊞', label: 'Översikt' },
-  { n: 2, icon: '🏢', label: 'Kund' },
-  { n: 3, icon: '☀',  label: 'Paneler' },
-  { n: 4, icon: '⬡',  label: 'Takplan' },
-  { n: 6, icon: '⚡',  label: 'Elsystem' },
-  { n: 7, icon: '📊', label: 'Timdata' },
-  { n: 8, icon: '📈', label: 'Analys' },
+  { n: 1,  icon: '⊞', label: 'Översikt' },
+  { n: 2,  icon: '🏢', label: 'Kund' },
+  { n: 3,  icon: '☀',  label: 'Paneler' },
+  { n: 4,  icon: '⬡',  label: 'Takplan' },
+  { n: 5,  icon: '▦',  label: 'Layout' },
+  { n: 6,  icon: '⚡',  label: 'Elsystem' },
+  { n: 7,  icon: '📊', label: 'Timdata' },
+  { n: 8,  icon: '📈', label: 'Analys' },
+  { n: 10, icon: '📄', label: 'Rapport' },
 ]
 
 export default function ProjectView() {
   const { openProjectData, projectTab, setProjectTab, updateProjectData } = useProjectStore()
   if (!openProjectData) return null
 
-  const name = openProjectData.customer?.name || 'Nytt projekt'
+  const name = openProjectData.customer?.name || 'Namnlöst projekt'
   const status = openProjectData.status || 'Lead'
 
   return (
@@ -58,6 +62,8 @@ export default function ProjectView() {
         {projectTab === 6 && <ElectricalSystem />}
         {projectTab === 7 && <LoadData />}
         {projectTab === 8 && <Analysis />}
+        {projectTab === 5  && <Layout />}
+        {projectTab === 10 && <Report />}
       </div>
     </div>
   )
