@@ -1,6 +1,8 @@
+import { useRef, useEffect } from 'react'
 import { T, btn } from '../../utils/design.js'
 import useProjectStore from '../../store/useProjectStore.js'
 import { MONTHLY_F, MON_DAYS } from '../../utils/calc.js'
+import { drawLayout } from '../../utils/canvasRender.js'
 
 const MONTHS = ['Jan','Feb','Mar','Apr','Maj','Jun','Jul','Aug','Sep','Okt','Nov','Dec']
 const fmt = (n, dec = 0) => (n != null && isFinite(n)) ? n.toLocaleString('sv-SE', { maximumFractionDigits: dec }) : '—'
@@ -56,12 +58,24 @@ function KV({ label, value, unit }) {
 
 export default function Report() {
   const { openProjectData, calc } = useProjectStore()
+  const canvasRef = useRef(null)
 
   const cust   = openProjectData?.customer || {}
   const panel  = openProjectData?.activePanel || { model: '', wp: 400, width: 1.1, height: 1.7 }
   const planes = openProjectData?.roofPlanes || []
   const load   = openProjectData?.loadData || {}
   const elec   = openProjectData?.electrical || {}
+  const canvasData = openProjectData?.canvasData || {}
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    ctx.fillStyle = '#fafcff'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+    const allFields = Object.values(canvasData).flat()
+    drawLayout(ctx, allFields, panel, { gridW: canvas.width, gridH: canvas.height, showGrid: true })
+  }, [canvasData, panel])
 
   const handlePrint = () => window.print()
 
@@ -236,6 +250,27 @@ export default function Report() {
         </div>
 
         <PageFooter page={2} />
+      </div>
+
+      {/* Sida 3 */}
+      <div id="report-page-3" style={{ ...pageStyle, display: 'flex', flexDirection: 'column' }}>
+        <PageHeader title="Layoutritning" />
+
+        <div style={{ marginBottom: 8, fontWeight: 700, fontSize: 14 }}>Panellayout — alla takplan</div>
+        <div style={{ fontSize: 10, color: '#5a6a7a', marginBottom: 12 }}>
+          Totalt {totalPanels} paneler · Skala 1 px = 1 cm
+        </div>
+
+        <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center' }}>
+          <canvas
+            ref={canvasRef}
+            width={698}
+            height={500}
+            style={{ border: '1px solid #dce4ef', borderRadius: 6, maxWidth: '100%' }}
+          />
+        </div>
+
+        <PageFooter page={3} />
       </div>
     </>
   )
