@@ -177,7 +177,7 @@ export default function Report() {
                 ['Energibesparing',           `${fmt(calc?.energySave)} kr/år`],
                 ['Effektbesparing',           `${fmt(calc?.peakSave)} kr/år`],
                 ['Skatt / avgift',            `${fmt(calc?.taxAmt)} kr/år`],
-                ['Energiskatt (≥500 kWp)',    `${fmt(calc?.energyTax)} kr/år`],
+                ...(calc?.energyTax > 0 ? [['Energiskatt (≥500 kWp)', `${fmt(calc?.energyTax)} kr/år`]] : []),
                 ['Nettobesparing efter skatt',`${fmt(calc?.netAfterTax)} kr/år`],
                 ['Investering (est.)',         `${fmt(calc?.invest)} kr`],
                 ['Återbetalningstid',          `${fmt(calc?.payback, 1)} år`],
@@ -200,7 +200,7 @@ export default function Report() {
             <div style={{ marginTop: 8, color: '#5a6a7a', fontSize: 10 }}>
               {cust.taxCategory === 'Privatperson'
                 ? load.taxYear === '2025'
-                  ? 'Skattereduktion 0,60 kr/kWh (max 30 000 kWh) + 30 % kapitalskatt på resterande'
+                  ? 'Kapitalskatt 30 % på (exportintäkt − 40 000 kr), minus skattereduktion 0,60 kr/kWh (max 30 000 kWh)'
                   : '30 % kapitalskatt på (exportintäkt − 40 000 kr)'
                 : '20,6 % bolagsskatt på exportintäkt'}
             </div>
@@ -210,7 +210,7 @@ export default function Report() {
         <div style={{ marginBottom: 'auto' }}>
           <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8 }}>Månadsproduktion vs Förbrukning</div>
           {calc?.monthlyProd && (
-            <svg width={700} height={160} style={{ display: 'block' }}>
+            <svg width={698} height={160} style={{ display: 'block' }}>
               {(() => {
                 const mp   = calc.monthlyProd
                 const ml   = MONTHLY_F.map((f, mi) => (load.annualLoad || 0) / 12 * MON_DAYS[mi] / 30)
