@@ -1,5 +1,5 @@
 import { useRef, useEffect, useState, useCallback } from 'react'
-import { T, btn, card } from '../../utils/design.js'
+import { T, btn } from '../../utils/design.js'
 import useProjectStore from '../../store/useProjectStore.js'
 import {
   snapToGrid, panelDims, getCellAtPoint,
@@ -30,6 +30,12 @@ export default function Layout() {
   const [drawState, setDrawState]              = useState(null)
 
   const fields = openProjectData?.canvasData?.[selectedPlaneId] || []
+
+  useEffect(() => {
+    if (planes.length > 0 && !planes.some(p => p.id === selectedPlaneId)) {
+      setSelectedPlaneId(planes[0].id)
+    }
+  }, [planes, selectedPlaneId])
 
   const redraw = useCallback((preview = null) => {
     const canvas = canvasRef.current
