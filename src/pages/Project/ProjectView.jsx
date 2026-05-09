@@ -9,6 +9,7 @@ import ElectricalSystem from './ElectricalSystem.jsx'
 import LoadData from './LoadData.jsx'
 import Analysis from './Analysis.jsx'
 import Layout from './Layout.jsx'
+import CAD from './CAD.jsx'
 import Report from './Report.jsx'
 
 const TABS = [
@@ -17,6 +18,7 @@ const TABS = [
   { n: 3,  icon: '☀',  label: 'Paneler' },
   { n: 4,  icon: '⬡',  label: 'Takplan' },
   { n: 5,  icon: '▦',  label: 'Layout' },
+  { n: 9,  icon: '📐', label: 'CAD' },
   { n: 6,  icon: '⚡',  label: 'Elsystem' },
   { n: 7,  icon: '📊', label: 'Timdata' },
   { n: 8,  icon: '📈', label: 'Analys' },
@@ -60,6 +62,7 @@ export default function ProjectView() {
         {projectTab === 3  && <PanelLibrary />}
         {projectTab === 4  && <RoofPlanes />}
         {projectTab === 5  && <Layout />}
+        {projectTab === 9  && <CAD />}
         {projectTab === 6  && <ElectricalSystem />}
         {projectTab === 7  && <LoadData />}
         {projectTab === 8  && <Analysis />}
