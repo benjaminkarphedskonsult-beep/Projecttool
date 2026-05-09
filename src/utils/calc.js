@@ -57,7 +57,7 @@ export function calcProject(data) {
   )
   const annualProd = monthlyProd.reduce((s, v) => s + v, 0)
 
-  const profile     = LOAD_PROFILES[loadData.profile] || LOAD_PROFILES.industri
+  const profile     = loadData.customProfile || LOAD_PROFILES[loadData.profile] || LOAD_PROFILES.industri
   const profileSum  = profile.reduce((s, v) => s + v, 0)
   const annualLoad  = loadData.annualLoad || 0
   let totSelf = 0, totExp = 0, totPeak = 0
@@ -73,7 +73,8 @@ export function calcProject(data) {
   }
 
   const exportRevenue = totExp * (loadData.spotPrice || 0)
-  const battSave  = loadData.hasBattery ? annualLoad * 0.15 * ((loadData.spotPrice || 0) + (loadData.gridTariff || 0)) : 0
+  const battSave  = (loadData.hasBattery && annualProd > 0 && (loadData.battCapacity || 0) > 0)
+    ? annualLoad * 0.15 * ((loadData.spotPrice || 0) + (loadData.gridTariff || 0)) : 0
   const energySave = totSelf * ((loadData.spotPrice || 0) + (loadData.gridTariff || 0))
                    + totExp  * ((loadData.spotPrice || 0) + 0.08)
                    + battSave

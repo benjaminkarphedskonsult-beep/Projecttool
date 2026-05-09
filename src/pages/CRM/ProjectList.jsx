@@ -44,7 +44,7 @@ export default function ProjectList() {
                 <tr key={p.id} onClick={() => openProject(p.id)} style={{ cursor: 'pointer', borderBottom: `1px solid ${T.borderLight}` }}
                   onMouseEnter={e => e.currentTarget.style.background = T.bg}
                   onMouseLeave={e => e.currentTarget.style.background = '#fff'}>
-                  <td style={{ padding: '10px 14px', fontWeight: 600 }}>{p.data?.customer?.name || '—'}</td>
+                  <td style={{ padding: '10px 14px', fontWeight: 600 }}>{p.data?.customer?.name || 'Namnlöst projekt'}</td>
                   <td style={{ padding: '10px 14px', color: T.textMuted }}>{p.data?.customer?.address || '—'}</td>
                   <td style={{ padding: '10px 14px' }}><StatusBadge status={p.data?.status || 'Lead'} size="sm" /></td>
                   <td style={{ padding: '10px 14px' }}>{calc?.totalKWp.toFixed(1) || '—'}</td>

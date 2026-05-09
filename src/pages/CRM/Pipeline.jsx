@@ -28,7 +28,7 @@ export default function Pipeline() {
                   style={{ ...card(), padding: '12px', cursor: 'pointer', borderLeft: `3px solid ${T.blue}`,
                     outline: p.id === openProjectId ? `2px solid ${T.blue}` : 'none' }}>
                   <div style={{ fontWeight: 700, fontSize: 13, color: T.text, marginBottom: 2 }}>
-                    {p.data?.customer?.name || 'Namnlöst'}
+                    {p.data?.customer?.name || 'Namnlöst projekt'}
                   </div>
                   <div style={{ fontSize: 11, color: T.textMuted, marginBottom: 6 }}>
                     {p.data?.customer?.address || '—'}
