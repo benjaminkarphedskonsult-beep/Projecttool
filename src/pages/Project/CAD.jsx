@@ -26,6 +26,12 @@ export default function CAD() {
   const selectedPlane = planes.find(p => p.id === selectedPlaneId) || planes[0] || {}
   const planeData = canvasData[selectedPlaneId] || { fields: [], obstacles: [] }
 
+  useEffect(() => {
+    if (planes.length > 0 && !planes.some(p => p.id === selectedPlaneId)) {
+      setSelectedPlaneId(planes[0].id)
+    }
+  }, [planes, selectedPlaneId])
+
   const { w: roofW, h: roofH } = roofBoundaryDims(selectedPlane)
   const CANVAS_W = Math.min(900, roofW + 60)
   const CANVAS_H = Math.min(700, roofH + 60)
@@ -38,28 +44,12 @@ export default function CAD() {
     ctx.fillStyle = '#ffffff'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
-    // Offset så ram inte klipps
+    const scale = canvas.width / (roofW + 60)
     ctx.save()
+    ctx.scale(scale, scale)
     ctx.translate(30, 30)
     drawRoofBoundary(ctx, selectedPlane)
     drawLayout(ctx, planeData, panel, { gridW: roofW, gridH: roofH, showGrid: true })
-    ctx.restore()
-
-    // Dimensionslinjer
-    ctx.strokeStyle = '#1557a0'
-    ctx.lineWidth = 0.5
-    ctx.setLineDash([3, 3])
-    ctx.beginPath()
-    ctx.moveTo(30, 20); ctx.lineTo(30 + roofW, 20)  // överkant
-    ctx.moveTo(20, 30); ctx.lineTo(20, 30 + roofH)  // vänsterkant
-    ctx.stroke()
-    ctx.setLineDash([])
-    ctx.fillStyle = '#1557a0'
-    ctx.font = '11px Arial'
-    ctx.textAlign = 'center'
-    ctx.fillText(`${selectedPlane.length} m`, 30 + roofW / 2, 14)
-    ctx.save(); ctx.translate(12, 30 + roofH / 2); ctx.rotate(-Math.PI / 2)
-    ctx.fillText(`${selectedPlane.width} m`, 0, 0)
     ctx.restore()
   }, [selectedPlane, planeData, panel, roofW, roofH])
 
