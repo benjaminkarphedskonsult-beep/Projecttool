@@ -40,6 +40,8 @@ export function generateDxf(plane, planeData, panel) {
       for (let c = 0; c < field.cols; c++) {
         const px = field.x + c * pw
         const py = field.y + r * ph
+        const idx = r * field.cols + c
+        if ((field.removed || []).includes(idx)) continue
         const dxfY = flip(py + ph)
         entities.push(rect(px, dxfY, pw, ph, 'PANELER'))
       }
