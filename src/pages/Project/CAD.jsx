@@ -71,6 +71,63 @@ export default function CAD() {
     a.click()
   }
 
+  const handlePdf = () => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const imgData = canvas.toDataURL('image/png')
+    const name = cust.name?.replace(/\s+/g, '-').toLowerCase() || 'projekt'
+    const win = window.open('', '_blank')
+    win.document.write(`<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>${name}-takplan-${selectedPlane.id}</title>
+<style>
+  @page { size: A4 landscape; margin: 8mm; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; font-size: 10px; color: #1a2332; height: 100vh; }
+  .wrap { display: flex; height: 100%; }
+  .drawing { flex: 1; display: flex; align-items: center; justify-content: center; padding: 4mm; border: 1px solid #dce4ef; }
+  .drawing img { max-width: 100%; max-height: 100%; object-fit: contain; }
+  .tb { width: 52mm; border-left: 2px solid #1557a0; padding: 10px 8px; display: flex; flex-direction: column; }
+  .co { font-weight: 800; font-size: 12px; color: #0d2444; }
+  .co2 { font-size: 9px; color: #5a6a7a; margin-top: 1px; margin-bottom: 10px; }
+  .sec { border-top: 1px solid #dce4ef; padding-top: 8px; margin-bottom: 8px; }
+  .lbl { font-size: 7px; color: #8a9ab0; text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+  .nm { font-size: 11px; font-weight: 700; color: #0d2444; }
+  .ad { font-size: 9px; color: #5a6a7a; margin-top: 2px; }
+  .rw { display: flex; justify-content: space-between; font-size: 9px; margin-bottom: 3px; }
+  .rw .k { color: #8a9ab0; }
+  .rw .v { font-weight: 600; }
+  .rw.bl .v { color: #1557a0; font-weight: 700; }
+  .bot { margin-top: auto; border-top: 1px solid #dce4ef; padding-top: 8px; }
+</style></head><body>
+<div class="wrap">
+  <div class="drawing"><img src="${imgData}"/></div>
+  <div class="tb">
+    <div class="co">KARPHEDS</div>
+    <div class="co2">Energikonsult AB</div>
+    <div class="sec">
+      <div class="lbl">Kund</div>
+      <div class="nm">${cust.name || '—'}</div>
+      ${cust.address ? `<div class="ad">${cust.address}</div>` : ''}
+    </div>
+    <div class="sec">
+      <div class="rw"><span class="k">Projekt-ID</span><span class="v">${openProjectData?.id?.slice(0, 8) || '—'}</span></div>
+      <div class="rw"><span class="k">Datum</span><span class="v">${today}</span></div>
+      <div class="rw"><span class="k">Skala</span><span class="v">1:100</span></div>
+      <div class="rw"><span class="k">Ritad av</span><span class="v">R. Karphed</span></div>
+    </div>
+    <div class="bot">
+      <div class="rw bl"><span class="k">Takplan</span><span class="v">${planeIndex + 1} av ${planes.length}</span></div>
+      <div class="rw bl"><span class="k">Mått</span><span class="v">${selectedPlane.length}×${selectedPlane.width} m</span></div>
+      <div class="rw bl"><span class="k">Paneler</span><span class="v">${panelCount} st</span></div>
+      <div class="rw bl"><span class="k">System</span><span class="v">${calc?.totalKWp?.toFixed(1) || '—'} kWp</span></div>
+    </div>
+  </div>
+</div>
+<script>window.onload=()=>window.print()<\/script>
+</body></html>`)
+    win.document.close()
+  }
+
   const planeIndex = planes.findIndex(p => p.id === selectedPlaneId)
   const panelCount = (planeData.fields || []).reduce((s, f) => s + f.cols * f.rows - (f.removed?.length ?? 0), 0)
   const today = new Date().toLocaleDateString('sv-SE')
@@ -93,6 +150,9 @@ export default function CAD() {
         </button>
         <button onClick={handlePng} style={{ ...btn('secondary'), fontSize: 11, padding: '4px 14px' }}>
           ⬇ Exportera PNG
+        </button>
+        <button onClick={handlePdf} style={{ ...btn('secondary'), fontSize: 11, padding: '4px 14px' }}>
+          ⬇ Exportera PDF
         </button>
       </div>
 
