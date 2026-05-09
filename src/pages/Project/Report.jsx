@@ -1,7 +1,5 @@
-import { useRef, useEffect } from 'react'
 import { T, btn } from '../../utils/design.js'
 import useProjectStore from '../../store/useProjectStore.js'
-import { drawLayout } from '../../utils/canvasRender.js'
 import { MONTHLY_F, MON_DAYS } from '../../utils/calc.js'
 
 const MONTHS = ['Jan','Feb','Mar','Apr','Maj','Jun','Jul','Aug','Sep','Okt','Nov','Dec']
@@ -58,24 +56,12 @@ function KV({ label, value, unit }) {
 
 export default function Report() {
   const { openProjectData, calc } = useProjectStore()
-  const canvasRef = useRef(null)
 
   const cust   = openProjectData?.customer || {}
   const panel  = openProjectData?.activePanel || { model: '', wp: 400, width: 1.1, height: 1.7 }
   const planes = openProjectData?.roofPlanes || []
   const load   = openProjectData?.loadData || {}
   const elec   = openProjectData?.electrical || {}
-  const canvasData = openProjectData?.canvasData || {}
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (!canvas) return
-    const ctx = canvas.getContext('2d')
-    ctx.fillStyle = '#fafcff'
-    ctx.fillRect(0, 0, canvas.width, canvas.height)
-    const allFields = Object.values(canvasData).flat()
-    drawLayout(ctx, allFields, panel, { gridW: canvas.width, gridH: canvas.height, showGrid: true })
-  }, [canvasData, panel])
 
   const handlePrint = () => window.print()
 
