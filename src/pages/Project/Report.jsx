@@ -164,6 +164,79 @@ export default function Report() {
 
         <PageFooter page={1} />
       </div>
+
+      {/* Sida 2 */}
+      <div id="report-page-2" style={{ ...pageStyle, display: 'flex', flexDirection: 'column' }}>
+        <PageHeader title="Ekonomisk Analys" />
+
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8 }}>Ekonomisk sammanställning</div>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+            <tbody>
+              {[
+                ['Energibesparing',           `${fmt(calc?.energySave)} kr/år`],
+                ['Effektbesparing',           `${fmt(calc?.peakSave)} kr/år`],
+                ['Skatt / avgift',            `${fmt(calc?.taxAmt)} kr/år`],
+                ['Energiskatt (≥500 kWp)',    `${fmt(calc?.energyTax)} kr/år`],
+                ['Nettobesparing efter skatt',`${fmt(calc?.netAfterTax)} kr/år`],
+                ['Investering (est.)',         `${fmt(calc?.invest)} kr`],
+                ['Återbetalningstid',          `${fmt(calc?.payback, 1)} år`],
+              ].map(([k, v]) => (
+                <tr key={k} style={{ borderBottom: '1px solid #eef2f7' }}>
+                  <td style={{ padding: '5px 8px 5px 0', color: '#5a6a7a', width: 240 }}>{k}</td>
+                  <td style={{ padding: '5px 0', fontWeight: 600, color: '#1a2332' }}>{v}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div style={{ marginBottom: 16 }}>
+          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8 }}>Skatteanalys</div>
+          <div style={{ background: '#f0f4f9', borderRadius: 6, padding: '10px 14px', fontSize: 11 }}>
+            <div><strong>Kategori:</strong> {cust.taxCategory || '—'}</div>
+            <div><strong>Taxeringsår:</strong> {load.taxYear || '2026'}</div>
+            <div><strong>Exportintäkt:</strong> {fmt(calc?.exportRevenue)} kr/år</div>
+            <div style={{ marginTop: 8, color: '#5a6a7a', fontSize: 10 }}>
+              {cust.taxCategory === 'Privatperson'
+                ? load.taxYear === '2025'
+                  ? 'Skattereduktion 0,60 kr/kWh (max 30 000 kWh) + 30 % kapitalskatt på resterande'
+                  : '30 % kapitalskatt på (exportintäkt − 40 000 kr)'
+                : '20,6 % bolagsskatt på exportintäkt'}
+            </div>
+          </div>
+        </div>
+
+        <div style={{ marginBottom: 'auto' }}>
+          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 8 }}>Månadsproduktion vs Förbrukning</div>
+          {calc?.monthlyProd && (
+            <svg width={700} height={160} style={{ display: 'block' }}>
+              {(() => {
+                const mp   = calc.monthlyProd
+                const ml   = MONTHLY_F.map((f, mi) => (load.annualLoad || 0) / 12 * MON_DAYS[mi] / 30)
+                const maxV = Math.max(...mp, ...ml, 1)
+                const bW = 22, gap = 4, barGap = 2, h = 120, pad = 20
+                return MONTHS.map((m, mi) => {
+                  const ph2 = (mp[mi] / maxV) * h
+                  const lh2 = (ml[mi] / maxV) * h
+                  const x   = pad + mi * (bW * 2 + gap + barGap)
+                  return (
+                    <g key={mi}>
+                      <rect x={x}           y={h - ph2 + pad} width={bW} height={ph2} fill="#d97706" rx="2" opacity="0.85" />
+                      <rect x={x + bW + gap} y={h - lh2 + pad} width={bW} height={lh2} fill="#1557a0" rx="2" opacity="0.7" />
+                      <text x={x + bW} y={h + pad + 14} textAnchor="middle" fontSize="8" fill="#5a6a7a">{m}</text>
+                    </g>
+                  )
+                })
+              })()}
+              <text x={20} y={14} fontSize="9" fill="#d97706">■ Produktion</text>
+              <text x={100} y={14} fontSize="9" fill="#1557a0">■ Förbrukning</text>
+            </svg>
+          )}
+        </div>
+
+        <PageFooter page={2} />
+      </div>
     </>
   )
 }
