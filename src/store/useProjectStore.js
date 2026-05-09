@@ -10,6 +10,7 @@ const DEFAULT_PROJECT_DATA = {
   roofPlanes: [{ id: 1, length: 10, width: 6, tilt: 35, azimuth: 0, panels: 0, marginN: 0.5, marginS: 0.5, marginE: 0.5, marginW: 0.5 }],
   electrical: { fuse: 63, phases: 3, voltage: 400, inverterEff: 0.97, stringVMax: 1000 },
   loadData: { annualLoad: 0, profile: 'industri', gridTariff: 0.6, spotPrice: 0.8, peakTariff: 80, hasBattery: false, battCapacity: 0, taxYear: '2026' },
+  canvasData: {},
 }
 
 let saveTimer = null
@@ -117,7 +118,24 @@ const useProjectStore = create((set, get) => ({
     set({ panelLibrary: panels })
     await supabase.from('panel_library').upsert({ user_id: user.id, panels }, { onConflict: 'user_id' })
   },
+
+  updateCanvasFields: (roofPlaneId, fields) => {
+    const { openProjectData } = get()
+    if (!openProjectData) return
+    const panelCount = countCanvasPanels(fields)
+    const updatedPlanes = openProjectData.roofPlanes.map(p =>
+      p.id === roofPlaneId ? { ...p, panels: panelCount } : p
+    )
+    get().updateProjectData({
+      canvasData: { ...openProjectData.canvasData, [roofPlaneId]: fields },
+      roofPlanes: updatedPlanes,
+    })
+  },
 }))
+
+export function countCanvasPanels(fields) {
+  return (fields || []).reduce((sum, f) => sum + f.cols * f.rows - f.removed.length, 0)
+}
 
 function deepMerge(base, patch) {
   const result = { ...base }
