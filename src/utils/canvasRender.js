@@ -49,12 +49,10 @@ export function drawLayout(ctx, fields, panel, opts = {}) {
   if (showGrid) {
     ctx.strokeStyle = COLORS.gridLine
     ctx.lineWidth = 0.5
-    for (let x = 0; x <= gridW; x += SNAP) {
-      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, gridH); ctx.stroke()
-    }
-    for (let y = 0; y <= gridH; y += SNAP) {
-      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(gridW, y); ctx.stroke()
-    }
+    ctx.beginPath()
+    for (let x = 0; x <= gridW; x += SNAP) { ctx.moveTo(x, 0); ctx.lineTo(x, gridH) }
+    for (let y = 0; y <= gridH; y += SNAP) { ctx.moveTo(0, y); ctx.lineTo(gridW, y) }
+    ctx.stroke()
   }
 
   // Fields

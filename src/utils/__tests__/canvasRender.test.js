@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import { countCellRect, snapToGrid, getCellAtPoint } from '../canvasRender.js'
+import { countCellRect, snapToGrid, getCellAtPoint, panelDims, fieldRect } from '../canvasRender.js'
 
 describe('snapToGrid', () => {
   it('snaps 23 to 20 with grid 10', () => {
@@ -29,5 +29,25 @@ describe('getCellAtPoint', () => {
   it('returns null for a point outside the field', () => {
     const field = { x: 0, y: 0, cols: 2, rows: 2, orientation: 'portrait' }
     expect(getCellAtPoint(300, 5, field, 110, 170)).toBeNull()
+  })
+})
+
+describe('panelDims', () => {
+  it('portrait: w=110, h=170 för 1.1m x 1.7m panel', () => {
+    expect(panelDims({ width: 1.1, height: 1.7 }, 'portrait')).toEqual({ w: 110, h: 170 })
+  })
+  it('landscape: w=170, h=110 för 1.1m x 1.7m panel', () => {
+    expect(panelDims({ width: 1.1, height: 1.7 }, 'landscape')).toEqual({ w: 170, h: 110 })
+  })
+  it('defaultar till 1.1m x 1.7m vid saknad panel', () => {
+    expect(panelDims({}, 'portrait')).toEqual({ w: 110, h: 170 })
+  })
+})
+
+describe('fieldRect', () => {
+  it('portrait 3x2 fält ger korrekt rect', () => {
+    const field = { x: 20, y: 10, cols: 3, rows: 2, orientation: 'portrait' }
+    const panel = { width: 1.1, height: 1.7 }
+    expect(fieldRect(field, panel)).toEqual({ x: 20, y: 10, width: 330, height: 340 })
   })
 })
