@@ -143,6 +143,8 @@ const useProjectStore = create((set, get) => ({
   updateCanvasObstacles: (roofPlaneId, obstacles) => {
     const { openProjectData } = get()
     if (!openProjectData) return
+    const planeExists = openProjectData.roofPlanes.some(p => p.id === roofPlaneId)
+    if (!planeExists) return
     const current = openProjectData.canvasData[roofPlaneId] || { fields: [], obstacles: [] }
     get().updateProjectData({
       canvasData: { ...openProjectData.canvasData, [roofPlaneId]: { ...current, obstacles } },
@@ -150,7 +152,6 @@ const useProjectStore = create((set, get) => ({
   },
 }))
 
-// Lägg till denna hjälpfunktion UTANFÖR create(), ovanför countCanvasPanels:
 function migrateCanvasPlane(data) {
   if (!data) return { fields: [], obstacles: [] }
   if (Array.isArray(data)) return { fields: data, obstacles: [] }
