@@ -33,10 +33,10 @@ export function cellIndex(col, row, cols) {
   return row * cols + col
 }
 
-export function roofBoundaryDims(plane) {
+export function roofBoundaryDims(plane = {}) {
   return {
-    w: Math.round((plane.length || 10) * PX_PER_M),
-    h: Math.round((plane.width  || 6)  * PX_PER_M),
+    w: Math.round(((plane?.length) || 10) * PX_PER_M),
+    h: Math.round(((plane?.width)  || 6)  * PX_PER_M),
   }
 }
 
