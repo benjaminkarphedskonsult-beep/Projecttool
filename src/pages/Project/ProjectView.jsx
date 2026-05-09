@@ -11,6 +11,7 @@ import Analysis from './Analysis.jsx'
 import Layout from './Layout.jsx'
 import CAD from './CAD.jsx'
 import Report from './Report.jsx'
+import ErrorBoundary from '../../components/ErrorBoundary.jsx'
 
 const TABS = [
   { n: 1,  icon: '⊞', label: 'Översikt' },
@@ -62,7 +63,7 @@ export default function ProjectView() {
         {projectTab === 3  && <PanelLibrary />}
         {projectTab === 4  && <RoofPlanes />}
         {projectTab === 5  && <Layout />}
-        {projectTab === 9  && <CAD />}
+        {projectTab === 9  && <ErrorBoundary><CAD /></ErrorBoundary>}
         {projectTab === 6  && <ElectricalSystem />}
         {projectTab === 7  && <LoadData />}
         {projectTab === 8  && <Analysis />}
